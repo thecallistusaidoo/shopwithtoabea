@@ -1,0 +1,16 @@
+# Secrets: never commit real credentials
+backend/.env
+.env
+*.env.local
+
+# Build output
+backend/target/
+
+# Tooling
+.playwright-cli/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+*.iml

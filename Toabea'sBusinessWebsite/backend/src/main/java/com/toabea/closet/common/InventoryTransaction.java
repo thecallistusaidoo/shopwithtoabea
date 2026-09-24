@@ -1,0 +1,3 @@
+package com.toabea.closet.common;
+import lombok.*; import org.springframework.data.annotation.*; import org.springframework.data.mongodb.core.index.Indexed; import org.springframework.data.mongodb.core.mapping.Document; import java.time.Instant;
+@Document("inventory_transactions") @Getter @Setter @NoArgsConstructor public class InventoryTransaction { @Id private String id; @Indexed private String productId; private String orderId; private String orderNumber; private String customerName; private String size; private int quantityDelta; private int balanceAfter; private String reason; private Instant createdAt=Instant.now(); }

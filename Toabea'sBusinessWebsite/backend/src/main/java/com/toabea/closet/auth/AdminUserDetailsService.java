@@ -1,0 +1,3 @@
+package com.toabea.closet.auth;
+import com.toabea.closet.common.*; import org.springframework.security.core.userdetails.*; import org.springframework.stereotype.Service;
+@Service public class AdminUserDetailsService implements UserDetailsService { private final AdminUserRepository repo; public AdminUserDetailsService(AdminUserRepository repo){this.repo=repo;} public UserDetails loadUserByUsername(String username){AdminUser u=repo.findByUsername(username).orElseThrow(()->new UsernameNotFoundException(username)); return User.withUsername(u.getUsername()).password(u.getPasswordHash()).roles(u.getRoles().toArray(String[]::new)).disabled(!u.isEnabled()).build();} }

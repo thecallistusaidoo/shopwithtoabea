@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Toabea's Closet: Admin Panel</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='26' fill='%23E0457E'/%3E%3Ctext x='50' y='69' font-family='Georgia,serif' font-size='58' font-style='italic' font-weight='700' fill='white' text-anchor='middle'%3ET%3C/text%3E%3C/svg%3E">
+  <style>/* ═══════════════════════════════════════════════════════
+   TOABEA'S CLOSET AND MORE ADMIN PANEL: CSS (light glass theme)
+═══════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --a-bg:      #FFF6FA;
+  --a-sidebar: rgba(255,255,255,.55);
+  --a-card:    rgba(255,255,255,.6);
+  --a-card2:   rgba(255,255,255,.8);
+  --a-border:  rgba(224,69,126,.16);
+  --a-text:    #341522;
+  --a-sub:     #9C7385;
+  --a-primary: #E0457E;
+  --a-primary-dark: #B8335F;
+  --a-pink-soft: #B8335F;
+  --a-success: #16A34A;
+  --a-warn:    #C77D0A;
+  --a-error:   #DC2626;
+  --radius: 14px;
+  --glass-blur: blur(18px) saturate(160%);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif; color: var(--a-text); min-height: 100vh;
+  overflow-x: hidden;
+  background: var(--a-bg);
+  background-image:
+    radial-gradient(ellipse 900px 600px at 10% -10%, rgba(224,69,126,.14) 0%, transparent 60%),
+    radial-gradient(ellipse 800px 700px at 100% 20%, rgba(184,51,95,.10) 0%, transparent 55%),
+    radial-gradient(ellipse 700px 700px at 50% 120%, rgba(224,69,126,.08) 0%, transparent 60%);
+  background-attachment: fixed;
+}
+input, select, button, textarea { font-family: inherit; }
+.glass {
+  background: var(--a-card);
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255,255,255,.6);
+  box-shadow: 0 8px 32px rgba(224,69,126,.1);
+}
+
+/* ── Login screen ── */
+#admin-login-screen {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+}
+.login-box {
+  border-radius: 22px; padding: 48px; width: 100%; max-width: 420px;
+  box-shadow: 0 24px 70px rgba(184,51,95,.16);
+  display: flex; flex-direction: column; gap: 20px;
+}
+.login-logo { font-family: 'Syne',sans-serif; font-size: 28px; font-weight: 800; color: var(--a-text); letter-spacing: -1px; }
+.login-logo span { color: var(--a-primary); }
+.login-logo small { display: block; font-family:'DM Sans',sans-serif; font-size: 13px; font-weight: 500; color: var(--a-sub); text-transform: uppercase; letter-spacing: 1px; margin-top: 6px; }
+.login-title { font-size: 16px; color: var(--a-sub); margin-top: -8px; }
+.login-field { display: flex; flex-direction: column; gap: 8px; }
+.login-field label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--a-sub); }
+.login-field input {
+  background: rgba(255,255,255,.75); border: 1.5px solid var(--a-border);
+  border-radius: 10px; padding: 13px 16px; color: var(--a-text); font-size: 14px;
+  outline: none; transition: border-color .15s;
+}
+.login-field input:focus { border-color: var(--a-primary); box-shadow: 0 0 0 3px rgba(224,69,126,.15); }
+.login-error { background: rgba(220,38,38,.08); border: 1px solid rgba(220,38,38,.25); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--a-error); display: none; }
+.login-btn {
+  background: var(--a-primary); color: #fff; border: none;
+  border-radius: 10px; padding: 14px; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all .15s;
+}
+.login-btn:hover:not(:disabled) { background: var(--a-primary-dark); transform: translateY(-1px); }
+.login-btn:disabled { opacity: .6; cursor: not-allowed; }
+.login-note { font-size: 12px; color: var(--a-sub); text-align: center; line-height: 1.6; }
+@keyframes shake { 10%,90%{transform:translateX(-2px)} 20%,80%{transform:translateX(4px)} 30%,50%,70%{transform:translateX(-4px)} 40%,60%{transform:translateX(4px)} }
+.shake { animation: shake .38s cubic-bezier(.36,.07,.19,.97) both; }
+
+/* ── Admin dashboard layout ── */
+#admin-dashboard { display: none; min-height: 100vh; flex-direction: row; }
+
+/* Sidebar */
+.admin-sidebar {
+  width: 240px; min-width: 240px;
+  border-right: 1px solid var(--a-border);
+  display: flex; flex-direction: column; padding: 24px 0;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.admin-logo { font-family:'Syne',sans-serif; font-size: 20px; font-weight: 800; color: var(--a-text); padding: 0 20px 24px; border-bottom: 1px solid var(--a-border); letter-spacing: -1px; }
+.admin-logo span { color: var(--a-primary); }
+.admin-logo small { display: block; font-family:'DM Sans',sans-serif; font-size: 10px; font-weight: 500; color: var(--a-sub); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+.admin-nav { display: flex; flex-direction: column; gap: 2px; padding: 16px 10px; flex: 1; }
+.admin-nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+  border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 500;
+  color: var(--a-sub); transition: all .15s; border: none; background: none;
+  text-align: left; width: 100%;
+}
+.admin-nav-item:hover { background: rgba(224,69,126,.08); color: var(--a-text); }
+.admin-nav-item.active { background: rgba(224,69,126,.14); color: var(--a-primary); font-weight: 700; }
+.admin-nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+.admin-nav-badge { margin-left: auto; background: var(--a-primary); color: #fff; border-radius: 50px; padding: 1px 7px; font-size: 10px; font-weight: 800; }
+.admin-sidebar-bottom { padding: 16px 20px; border-top: 1px solid var(--a-border); display: flex; flex-direction: column; gap: 10px; }
+.admin-store-link {
+  background: rgba(255,255,255,.6); border: 1px solid var(--a-border);
+  color: var(--a-text); text-decoration: none; border-radius: 8px; padding: 10px 14px;
+  font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;
+  transition: all .15s;
+}
+.admin-store-link:hover { background: rgba(224,69,126,.1); border-color: var(--a-primary); color: var(--a-primary); }
+.admin-logout-btn {
+  background: rgba(220,38,38,.08); border: 1px solid rgba(220,38,38,.18);
+  color: var(--a-error); border-radius: 8px; padding: 10px 14px; font-size: 13px;
+  font-weight: 600; cursor: pointer; transition: all .15s; text-align: left;
+  display: flex; align-items: center; gap: 8px;
+}
+.admin-logout-btn:hover { background: rgba(220,38,38,.14); }
+
+/* Main area */
+.admin-main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+.admin-topbar {
+  padding: 18px 28px; border-bottom: 1px solid var(--a-border);
+  display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+  position: sticky; top: 0; z-index: 10;
+}
+.admin-topbar h1 { font-family: 'Syne',sans-serif; font-size: 20px; font-weight: 700; }
+.admin-topbar-actions { display: flex; gap: 10px; align-items: center; }
+.admin-topbar-search {
+  background: rgba(255,255,255,.7); border: 1px solid var(--a-border);
+  border-radius: 8px; padding: 9px 14px; color: var(--a-text); font-size: 13px;
+  outline: none; width: 220px; transition: border-color .15s;
+}
+.admin-topbar-search:focus { border-color: var(--a-primary); }
+.admin-topbar-search::placeholder { color: var(--a-sub); }
+
+/* Tab content: visibility is set in JS (showAdminTab), not via CSS structural selectors */
+.admin-tab-content { padding: 28px; display: none; }
+.admin-tab-content.active { display: block; }
+
+/* Stats row */
+.admin-stats-row { display: grid; grid-template-columns: repeat(6,1fr); gap: 14px; margin-bottom: 28px; }
+.admin-stat-card {
+  border-radius: var(--radius); padding: 18px; transition: transform .15s;
+}
+.admin-stat-card:hover { transform: translateY(-2px); }
+.admin-stat-icon { font-size: 20px; margin-bottom: 10px; }
+.admin-stat-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; margin-bottom: 6px; }
+.admin-stat-val { font-family: 'JetBrains Mono',monospace; font-variant-numeric: tabular-nums; font-size: 28px; font-weight: 700; line-height: 1.1; }
+
+/* Filter row */
+.admin-filter-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+.admin-filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.admin-filter-tab {
+  padding: 7px 14px; border-radius: 50px; font-size: 12px; font-weight: 600;
+  border: 1px solid var(--a-border); color: var(--a-sub); cursor: pointer;
+  background: rgba(255,255,255,.5); transition: all .15s;
+}
+.admin-filter-tab:hover, .admin-filter-tab.active { background: var(--a-primary); border-color: var(--a-primary); color: #fff; }
+
+/* Action buttons */
+.admin-action-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 700;
+  border: none; cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.admin-action-primary { background: var(--a-primary); color: #fff; }
+.admin-action-primary:hover:not(:disabled) { background: var(--a-primary-dark); transform: translateY(-1px); }
+.admin-action-primary:disabled { opacity: .6; cursor: not-allowed; }
+.admin-action-outline { background: rgba(255,255,255,.6); color: var(--a-text); border: 1px solid var(--a-border); }
+.admin-action-outline:hover { border-color: var(--a-primary); color: var(--a-primary); }
+.admin-action-success { background: rgba(22,163,74,.1); color: var(--a-success); border: 1px solid rgba(22,163,74,.25); }
+
+/* Products table */
+.admin-table-wrap { border-radius: var(--radius); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.admin-table, .orders-table { width: 100%; min-width: 640px; border-collapse: collapse; font-size: 13px; }
+.admin-table thead th, .orders-table thead th {
+  background: rgba(224,69,126,.06); color: var(--a-sub); font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .6px; padding: 12px 16px; text-align: left;
+  border-bottom: 1px solid var(--a-border);
+}
+.admin-table tbody td, .orders-table tbody td { padding: 16px; border-bottom: 1px solid var(--a-border); vertical-align: middle; }
+.admin-table tbody tr:last-child td, .orders-table tbody tr:last-child td { border-bottom: none; }
+.admin-table tbody tr:hover td, .orders-table tbody tr:hover td { background: rgba(224,69,126,.04); }
+.admin-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all .15s; }
+.admin-btn-edit { background: rgba(224,69,126,.12); color: var(--a-primary-dark); }
+.admin-btn-edit:hover { background: rgba(224,69,126,.22); }
+.admin-btn-del  { background: rgba(220,38,38,.1); color: var(--a-error); }
+.admin-btn-del:hover  { background: rgba(220,38,38,.18); }
+
+/* Toggle switch */
+.toggle-switch { position: relative; display: inline-block; width: 40px; height: 22px; cursor: pointer; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; inset: 0; background: rgba(52,21,34,.16);
+  border-radius: 22px; transition: background .2s;
+}
+.toggle-slider::before {
+  content: ''; position: absolute; width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; left: 3px; top: 3px; transition: all .2s; box-shadow: 0 1px 3px rgba(0,0,0,.25);
+}
+.toggle-switch input:checked + .toggle-slider { background: rgba(22,163,74,.35); }
+.toggle-switch input:checked + .toggle-slider::before { background: var(--a-success); transform: translateX(18px); }
+
+/* ── Modals (product / inventory history) ── */
+.product-modal-overlay {
+  position: fixed; inset: 0; background: rgba(52,21,34,.4); backdrop-filter: blur(8px);
+  z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.product-modal-overlay.open { opacity: 1; pointer-events: all; }
+.product-modal {
+  border-radius: 18px;
+  width: 100%; max-width: 680px; max-height: 92vh; overflow-y: auto;
+  transform: scale(.95) translateY(16px); transition: transform .25s ease;
+  display: flex; flex-direction: column;
+}
+.product-modal-overlay.open .product-modal { transform: scale(1) translateY(0); }
+.pm-head {
+  padding: 22px 28px; border-bottom: 1px solid var(--a-border);
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 1;
+  background: var(--a-card2); backdrop-filter: var(--glass-blur);
+}
+.pm-head h2 { font-family: 'Syne',sans-serif; font-size: 18px; font-weight: 700; }
+.pm-close { width: 34px; height: 34px; border-radius: 8px; background: rgba(255,255,255,.7); border: 1px solid var(--a-border); color: var(--a-sub); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+.pm-close:hover { color: var(--a-error); border-color: var(--a-error); }
+.pm-body { padding: 28px; display: flex; flex-direction: column; gap: 20px; }
+.pm-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.pm-field { display: flex; flex-direction: column; gap: 8px; }
+.pm-field label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--a-sub); }
+.pm-field input, .pm-field select, .pm-field textarea {
+  background: rgba(255,255,255,.75); border: 1.5px solid var(--a-border);
+  border-radius: 8px; padding: 12px 14px; color: var(--a-text); font-size: 14px;
+  outline: none; transition: border-color .15s; width: 100%;
+}
+.pm-field input:focus, .pm-field select:focus, .pm-field textarea:focus {
+  border-color: var(--a-primary); box-shadow: 0 0 0 3px rgba(224,69,126,.1);
+}
+.pm-field textarea { min-height: 80px; resize: vertical; }
+.pm-field select option { background: #fff; color: var(--a-text); }
+
+/* Image upload zone */
+.img-upload-zone {
+  border: 2px dashed var(--a-border); border-radius: 10px; padding: 24px;
+  text-align: center; cursor: pointer; transition: all .2s; position: relative;
+}
+.img-upload-zone:hover, .img-upload-zone.drag-over { border-color: var(--a-primary); background: rgba(224,69,126,.06); }
+.img-upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.img-upload-icon { font-size: 32px; margin-bottom: 10px; }
+.img-upload-text { font-size: 14px; font-weight: 600; color: var(--a-text); }
+.img-upload-sub  { font-size: 12px; color: var(--a-sub); margin-top: 4px; }
+#img-preview { display: none; width: 100%; max-height: 180px; object-fit: cover; border-radius: 8px; margin-top: 12px; border: 1px solid var(--a-border); }
+.img-or { text-align: center; color: var(--a-sub); font-size: 12px; margin: 8px 0; }
+
+.pm-footer { padding: 20px 28px; border-top: 1px solid var(--a-border); display: flex; gap: 12px; justify-content: flex-end; }
+
+/* CSV import zone */
+.csv-zone {
+  border: 2px dashed var(--a-border); border-radius: 10px; padding: 32px;
+  text-align: center; cursor: pointer; transition: all .2s; position: relative;
+  background: rgba(255,255,255,.4);
+}
+.csv-zone:hover { border-color: var(--a-primary); background: rgba(224,69,126,.06); }
+.csv-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.csv-template { background: rgba(255,255,255,.6); border: 1px solid var(--a-border); border-radius: 8px; padding: 14px 18px; font-family: 'JetBrains Mono',monospace; font-size: 11px; color: var(--a-sub); margin-top: 12px; text-align: left; line-height: 1.6; }
+
+/* ── Admin toast ── */
+.admin-toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+  border-radius: 12px; padding: 14px 20px; font-size: 13px; font-weight: 600;
+  box-shadow: 0 8px 32px rgba(52,21,34,.2); opacity: 0; transform: translateY(12px);
+  transition: all .25s ease; display: flex; align-items: center; gap: 8px;
+  pointer-events: none;
+  background: var(--a-card2); backdrop-filter: var(--glass-blur); border: 1px solid var(--a-border);
+  color: var(--a-text);
+}
+.admin-toast.show { opacity: 1; transform: translateY(0); }
+.admin-toast.success { border-color: rgba(22,163,74,.4); color: var(--a-success); }
+.admin-toast.error   { border-color: rgba(220,38,38,.4); color: var(--a-error); }
+
+.settings-card { border-radius: var(--radius); padding: 28px; max-width: 460px; display: flex; flex-direction: column; gap: 18px; }
+.section-title { font-family:'Syne',sans-serif; font-size:20px; font-weight:700; margin-bottom: 6px; }
+.section-sub { color: var(--a-sub); font-size: 13px; margin-bottom: 20px; }
+.inline-form { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.inline-form input { flex: 1; min-width: 200px; background: rgba(255,255,255,.75); border: 1.5px solid var(--a-border); border-radius: 8px; padding: 10px 14px; color: var(--a-text); font-size: 13px; outline: none; }
+.inline-form input:focus { border-color: var(--a-primary); }
+.tip-box { margin-top: 32px; background: rgba(224,69,126,.08); border: 1px solid rgba(224,69,126,.2); border-radius: 10px; padding: 16px 20px; font-size: 13px; color: var(--a-sub); line-height: 1.7; }
+
+/* ── Responsive ── */
+@media (max-width: 1100px) {
+  .admin-stats-row { grid-template-columns: repeat(3,1fr); }
+}
+@media (max-width: 900px) {
+  .admin-sidebar { width: 200px; min-width: 200px; }
+  .admin-tab-content { padding: 20px; }
+}
+@media (max-width: 680px) {
+  #admin-dashboard { flex-direction: column; }
+  .admin-sidebar { width: 100%; height: auto; position: static; flex-direction: row; flex-wrap: wrap; padding: 12px; }
+  .admin-nav { flex-direction: row; flex-wrap: wrap; padding: 0; }
+  .admin-nav-item { width: auto; flex: 1 1 auto; justify-content: center; padding: 10px 8px; font-size: 13px; }
+  .admin-nav-item .nav-icon { width: auto; }
+  .admin-sidebar-bottom { flex-direction: row; flex-wrap: wrap; width: 100%; }
+  .admin-sidebar-bottom > * { flex: 1; justify-content: center; }
+  .admin-stats-row { grid-template-columns: repeat(2,1fr); gap: 10px; }
+  .pm-form-row { grid-template-columns: 1fr; }
+  .admin-topbar { flex-wrap: wrap; gap: 10px; padding: 14px 16px; }
+  .admin-topbar-actions { width: 100%; flex-wrap: wrap; }
+  .admin-topbar-search { width: 100%; flex: 1 1 auto; }
+  .admin-tab-content { padding: 16px; }
+  .pm-body, .pm-head, .pm-footer { padding-left: 18px; padding-right: 18px; }
+  .settings-card { max-width: 100%; padding: 20px; }
+}
+@media (max-width: 420px) {
+  .admin-stats-row { grid-template-columns: 1fr 1fr; }
+  .admin-stat-val { font-size: 24px; }
+  .login-box { padding: 32px 24px; }
+  .admin-action-btn { padding: 9px 14px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     LOGIN SCREEN
+═══════════════════════════════════════ -->
+<div id="admin-login-screen">
+  <div class="login-box glass">
+    <div class="login-logo">Toabea's <span>Closet</span> <small>Admin Panel</small></div>
+    <div id="admin-signin-panel">
+      <div class="login-title">Sign in to manage your store</div>
+      <div class="login-field">
+        <label>Username</label>
+        <input type="text" id="admin-username" placeholder="Enter admin username" autocomplete="username">
+      </div>
+      <div class="login-field">
+        <label>Password</label>
+        <input type="password" id="admin-password" placeholder="Enter admin password" autocomplete="current-password">
+      </div>
+      <div class="login-error" id="admin-login-error"></div>
+      <button class="login-btn" id="admin-login-btn" onclick="adminLogin()">Sign In</button>
+      <p class="login-note">Admin accounts are created on the server, not in this browser. If you have lost access, ask whoever manages the backend to reset the account using the bootstrap admin environment variables.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     ADMIN DASHBOARD
+═══════════════════════════════════════ -->
+<div id="admin-dashboard">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar glass">
+    <div class="admin-logo">Toabea's <span>Closet</span><small>Admin Panel</small></div>
+    <nav class="admin-nav">
+      <button class="admin-nav-item active" data-tab="products" onclick="showAdminTab('products')">
+        <span class="nav-icon">📦</span> Products
+      </button>
+      <button class="admin-nav-item" data-tab="categories" onclick="showAdminTab('categories')">
+        <span class="nav-icon">🏷</span> Categories
+      </button>
+      <button class="admin-nav-item" data-tab="import" onclick="showAdminTab('import')">
+        <span class="nav-icon">📥</span> Bulk Import
+      </button>
+      <button class="admin-nav-item" data-tab="orders" onclick="showAdminTab('orders')">
+        <span class="nav-icon">🛒</span> Orders
+        <span class="admin-nav-badge" id="orders-badge">0</span>
+      </button>
+      <button class="admin-nav-item" data-tab="customers" onclick="showAdminTab('customers')">
+        <span class="nav-icon">👥</span> Customers
+      </button>
+      <button class="admin-nav-item" data-tab="inventory" onclick="showAdminTab('inventory')">
+        <span class="nav-icon">📊</span> Inventory
+      </button>
+      <button class="admin-nav-item" data-tab="settings" onclick="showAdminTab('settings')">
+        <span class="nav-icon">⚙️</span> Settings
+      </button>
+    </nav>
+    <div class="admin-sidebar-bottom">
+      <a class="admin-store-link" href="https://discovered-cloud-kids-prospect.trycloudflare.com" target="_blank">🛍 View Storefront ↗</a>
+      <button class="admin-logout-btn" onclick="adminLogout()">⏻ Logout</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="admin-main">
+    <div class="admin-topbar glass">
+      <h1 id="admin-tab-title">Products</h1>
+      <div class="admin-topbar-actions" id="admin-topbar-actions">
+        <input class="admin-topbar-search" type="search" placeholder="Search products…" oninput="handleAdminSearch(this.value)" aria-label="Search products">
+        <button class="admin-action-btn admin-action-primary" onclick="openAddProduct()">+ Add Product</button>
+        <button class="admin-action-btn admin-action-outline" onclick="exportCSV()">Export CSV</button>
+      </div>
+    </div>
+
+    <!-- Tab: Products -->
+    <div class="admin-tab-content active" id="admin-tab-products">
+      <div class="admin-stats-row">
+        <div class="admin-stat-card glass">
+          <div class="admin-stat-icon">📦</div>
+          <div class="admin-stat-label" style="color:var(--a-primary)">Total Products</div>
+          <div class="admin-stat-val" style="color:var(--a-primary)" id="stat-total-products">0</div>
+        </div>
+        <div class="admin-stat-card glass">
+          <div class="admin-stat-icon">✅</div>
+          <div class="admin-stat-label" style="color:var(--a-success)">Inventory Value</div>
+          <div class="admin-stat-val" style="color:var(--a-success)" id="stat-inventory-val">GH₵0</div>
+        </div>
+        <div class="admin-stat-card glass">
+          <div class="admin-stat-icon">🛒</div>
+          <div class="admin-stat-label" style="color:var(--a-pink-soft)">Total Orders</div>
+          <div class="admin-stat-val" style="color:var(--a-pink-soft)" id="stat-total-orders">0</div>
+        </div>
+        <div class="admin-stat-card glass">
+          <div class="admin-stat-icon">💰</div>
+          <div class="admin-stat-label" style="color:var(--a-primary-dark)">Paid Revenue</div>
+          <div class="admin-stat-val" style="color:var(--a-primary-dark)" id="stat-revenue">GH₵0</div>
+        </div>
+        <div class="admin-stat-card glass">
+          <div class="admin-stat-icon">⚠️</div>
+          <div class="admin-stat-label" style="color:var(--a-warn)">Low Stock</div>
+          <div class="admin-stat-val" style="color:var(--a-warn)" id="stat-low-stock">0</div>
+        </div>
+        <div class="admin-stat-card glass">
+          <div class="admin-stat-icon">🚫</div>
+          <div class="admin-stat-label" style="color:var(--a-error)">Out of Stock</div>
+          <div class="admin-stat-val" style="color:var(--a-error)" id="stat-out-stock">0</div>
+        </div>
+      </div>
+
+      <div class="admin-filter-row">
+        <div class="admin-filter-tabs" id="admin-filter-tabs">
+          <button class="admin-filter-tab active" data-cat="All" onclick="setAdminFilter('All')">All</button>
+        </div>
+      </div>
+
+      <div class="admin-table-wrap glass">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Product</th><th>Category</th><th>Price</th><th>Old Price</th>
+              <th>Stock</th><th>Badge</th><th>Visible</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admin-products-tbody">
+            <tr><td colspan="8" style="text-align:center;padding:60px;color:var(--a-sub)">Loading products…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab: Categories -->
+    <div class="admin-tab-content" id="admin-tab-categories">
+      <h2 class="section-title">Categories</h2>
+      <p class="section-sub">Categories shown on the storefront and used in the product form.</p>
+      <div class="inline-form">
+        <input type="text" id="new-category-name" placeholder="New category name, e.g. Tank Tops">
+        <button class="admin-action-btn admin-action-primary" onclick="createCategory()">+ Add Category</button>
+      </div>
+      <div class="admin-table-wrap glass">
+        <table class="admin-table">
+          <thead><tr><th>Name</th><th>Visible</th><th>Actions</th></tr></thead>
+          <tbody id="admin-categories-tbody">
+            <tr><td colspan="3" style="text-align:center;padding:40px;color:var(--a-sub)">Loading categories…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab: Bulk Import -->
+    <div class="admin-tab-content" id="admin-tab-import">
+      <h2 class="section-title">Bulk Import via CSV</h2>
+      <p class="section-sub">Upload a CSV file to import multiple products at once. Use the template below. Each row is created through the same product API used by the form, so stock and prices are validated the same way.</p>
+
+      <div class="csv-zone">
+        <input type="file" accept=".csv" onchange="handleCSVImport(this)">
+        <div style="font-size:36px;margin-bottom:12px">📄</div>
+        <div style="font-size:15px;font-weight:600;color:var(--a-text)">Drop your CSV file here or click to browse</div>
+        <div style="font-size:12px;color:var(--a-sub);margin-top:6px">Supports .csv files only</div>
+      </div>
+
+      <div style="margin-top:24px">
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--a-sub);margin-bottom:10px">CSV Format (header row required)</div>
+        <div class="csv-template">Name,Category,Price,Old Price,Stock,Badge,Description,Image URL<br>
+"Ribbed Tank Top","Tank Tops","45.00","","50","new","Soft ribbed cotton tank","https://..."<br>
+"Classic Straight Dress","Straight Dresses","120.00","150.00","30","sale","Simple, chic, everyday dress","https://..."<br>
+"Ruffle Mini Skirt","Skirts","70.00","","20","","Pretty and playful","https://..."</div>
+      </div>
+
+      <div style="margin-top:20px;display:flex;gap:12px">
+        <button class="admin-action-btn admin-action-primary" onclick="document.querySelector('.csv-zone input').click()">📥 Choose CSV File</button>
+        <button class="admin-action-btn admin-action-outline" onclick="exportCSV()">Download Current Products as CSV</button>
+      </div>
+
+      <div class="tip-box">
+        💡 <strong style="color:var(--a-primary)">Tips:</strong>
+        Leave "Old Price" empty if there is no discount. For "Badge" use: <code>sale</code>, <code>new</code>, or <code>hot</code>.
+        Add categories first on the Categories tab so imported products line up with the storefront filters.
+        Stock of <code>0</code> shows "Out of Stock" on the storefront.
+      </div>
+    </div>
+
+    <!-- Tab: Orders -->
+    <div class="admin-tab-content" id="admin-tab-orders">
+      <h2 class="section-title" style="margin-bottom:20px">Orders</h2>
+      <div class="admin-table-wrap glass">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Order</th><th>Customer</th><th>Phone</th><th>Pickup / Delivery</th>
+              <th>Total</th><th>Payment</th><th>Status</th><th>Placed</th>
+            </tr>
+          </thead>
+          <tbody id="admin-orders-tbody">
+            <tr><td colspan="8" style="text-align:center;padding:48px;color:var(--a-sub)">Loading orders…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab: Customers -->
+    <div class="admin-tab-content" id="admin-tab-customers">
+      <h2 class="section-title" style="margin-bottom:20px">Customers</h2>
+      <div class="admin-table-wrap glass">
+        <table class="admin-table">
+          <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Last Updated</th></tr></thead>
+          <tbody id="admin-customers-tbody">
+            <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--a-sub)">Loading customers…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab: Inventory -->
+    <div class="admin-tab-content" id="admin-tab-inventory">
+      <h2 class="section-title" style="margin-bottom:20px">Inventory</h2>
+      <div class="admin-table-wrap glass">
+        <table class="admin-table">
+          <thead><tr><th>Product</th><th>Stock</th><th>History</th></tr></thead>
+          <tbody id="admin-inventory-tbody">
+            <tr><td colspan="3" style="text-align:center;padding:40px;color:var(--a-sub)">Loading inventory…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab: Settings -->
+    <div class="admin-tab-content" id="admin-tab-settings">
+      <h2 class="section-title">Store Settings</h2>
+      <p class="section-sub">The WhatsApp number below is used for the order notification handoff on the storefront.</p>
+      <div class="settings-card glass">
+        <div class="login-field">
+          <label>WhatsApp Notification Number</label>
+          <input type="tel" id="settings-whatsapp" placeholder="233598162907">
+        </div>
+        <button class="admin-action-btn admin-action-primary" style="justify-content:center" onclick="saveWhatsappSettings()">Save WhatsApp Number</button>
+      </div>
+
+      <h2 class="section-title" style="margin-top:32px">Change Password</h2>
+      <p class="section-sub">Update the password for the signed-in admin account.</p>
+      <div class="settings-card glass">
+        <div class="login-field">
+          <label>Current Password</label>
+          <input type="password" id="settings-current-password" placeholder="Enter your current password" autocomplete="current-password">
+        </div>
+        <div class="login-field">
+          <label>New Password</label>
+          <input type="password" id="settings-new-password" placeholder="At least 8 characters" autocomplete="new-password">
+        </div>
+        <div class="login-field">
+          <label>Confirm New Password</label>
+          <input type="password" id="settings-confirm-password" placeholder="Re-enter new password" autocomplete="new-password">
+        </div>
+        <div class="login-error" id="settings-error"></div>
+        <button class="admin-action-btn admin-action-primary" style="justify-content:center" onclick="changePassword()">Save New Password</button>
+        <p style="font-size:11px;color:var(--a-sub);line-height:1.5">Passwords are hashed with BCrypt on the server. Sign-in attempts are rate-limited to slow down guessing. Do not reuse a password from another site.</p>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PRODUCT ADD / EDIT MODAL
+═══════════════════════════════════════ -->
+<div class="product-modal-overlay" id="product-modal">
+  <div class="product-modal glass">
+    <div class="pm-head">
+      <h2 id="product-form-title">Add New Product</h2>
+      <button class="pm-close" onclick="closeProductModal()">✕</button>
+    </div>
+    <div class="pm-body">
+      <form id="product-form" onsubmit="event.preventDefault();saveProduct()">
+        <div class="pm-field">
+          <label>Product Image</label>
+          <div class="img-upload-zone" id="img-upload-zone">
+            <input type="file" accept="image/*" onchange="handleImageUpload(this)" id="img-file-input">
+            <div class="img-upload-icon">🖼</div>
+            <div class="img-upload-text" id="img-upload-status">Click to upload photo</div>
+            <div class="img-upload-sub">JPG, PNG, WEBP: max 8MB, uploaded to Cloudinary</div>
+            <img id="img-preview" src="" alt="Preview">
+          </div>
+          <div class="img-or">or paste an image URL</div>
+          <input type="url" id="pf-img-url" placeholder="https://res.cloudinary.com/..." oninput="document.getElementById('img-preview').src=this.value;document.getElementById('img-preview').style.display=this.value?'block':'none'">
+        </div>
+
+        <div class="pm-form-row">
+          <div class="pm-field">
+            <label>Product Name *</label>
+            <input type="text" id="pf-name" placeholder="e.g. Ribbed Tank Top" required maxlength="120">
+          </div>
+          <div class="pm-field">
+            <label>Category *</label>
+            <select id="pf-cat" required></select>
+          </div>
+        </div>
+
+        <div class="pm-form-row">
+          <div class="pm-field">
+            <label>Price (GH₵) *</label>
+            <input type="number" id="pf-price" placeholder="0.00" min="0" step="0.01" required>
+          </div>
+          <div class="pm-field">
+            <label>Old / Crossed-Out Price (GH₵)</label>
+            <input type="number" id="pf-old-price" placeholder="Leave empty if no discount" min="0" step="0.01">
+          </div>
+        </div>
+
+        <div class="pm-form-row">
+          <div class="pm-field">
+            <label>Stock Quantity *</label>
+            <input type="number" id="pf-stock" placeholder="e.g. 50" min="0" required>
+          </div>
+          <div class="pm-field">
+            <label>Badge</label>
+            <select id="pf-badge">
+              <option value="">None</option>
+              <option value="sale">Sale</option>
+              <option value="new">New</option>
+              <option value="hot">Hot</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pm-field">
+          <label>Sizes (optional)</label>
+          <p style="font-size:12px;color:var(--a-sub);margin:-4px 0 4px">For products like dresses that come in sizes. Add each size with its own stock count; the Stock Quantity above will total automatically. Leave empty if this product has no sizes.</p>
+          <div id="pf-sizes-rows" style="display:flex;flex-direction:column;gap:8px"></div>
+          <button type="button" class="admin-action-btn admin-action-outline" style="align-self:flex-start" onclick="addSizeRow()">+ Add Size</button>
+        </div>
+
+        <div class="pm-field">
+          <label>Description (optional)</label>
+          <textarea id="pf-desc" maxlength="2000" placeholder="Brief product description…"></textarea>
+        </div>
+      </form>
+    </div>
+    <div class="pm-footer">
+      <button class="admin-action-btn admin-action-outline" onclick="closeProductModal()">Cancel</button>
+      <button class="admin-action-btn admin-action-primary" id="save-product-btn" onclick="saveProduct()">💾 Save Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     INVENTORY HISTORY MODAL
+═══════════════════════════════════════ -->
+<div class="product-modal-overlay" id="inventory-modal">
+  <div class="product-modal glass" style="max-width:520px">
+    <div class="pm-head">
+      <h2>Stock History</h2>
+      <button class="pm-close" onclick="closeInventoryModal()">✕</button>
+    </div>
+    <div class="pm-body">
+      <div id="inventory-history-list" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* One line to change once this is deployed off localhost. */
+const API_BASE = 'https://luke-courts-sublime-preparing.trycloudflare.com';
+
+const TOKEN_KEY = 'tb_admin_token';
+const USERNAME_KEY = 'tb_admin_username';
+
+let authToken = sessionStorage.getItem(TOKEN_KEY) || null;
+let adminUsername = sessionStorage.getItem(USERNAME_KEY) || '';
+
+let products = [];
+let categories = [];
+let orders = [];
+let customers = [];
+let uploadCredentials = null;
+let editingId = null;
+let pendingImageUrl = '';
+let adminFilter = 'All';
+let adminSearch = '';
+let ordersPollTimer = null;
+
+function esc(str) {
+  return String(str ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+
+const IMG_FALLBACK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect width='400' height='300' fill='%23FFEAF2'/%3E%3Ccircle cx='200' cy='150' r='36' fill='%23E0457E' opacity='0.15'/%3E%3C/svg%3E";
+
+async function apiFetch(path, options = {}) {
+  const headers = Object.assign({}, options.headers || {});
+  if (options.body && !(options.body instanceof FormData) && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
+  if (authToken) headers['Authorization'] = 'Bearer ' + authToken;
+  const res = await fetch(API_BASE + path, Object.assign({}, options, { headers }));
+  if (res.status === 401 || res.status === 403) {
+    adminLogout();
+    throw new Error('Session expired, please sign in again');
+  }
+  if (!res.ok) {
+    let message = 'Request failed (' + res.status + ')';
+    try { const body = await res.json(); message = body.message || message; } catch {}
+    throw new Error(message);
+  }
+  if (res.status === 204) return null;
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+/* ── Auth ── */
+async function adminLogin() {
+  const user = document.getElementById('admin-username').value.trim();
+  const pass = document.getElementById('admin-password').value;
+  const err = document.getElementById('admin-login-error');
+  const btn = document.getElementById('admin-login-btn');
+  err.style.display = 'none';
+  if (!user || !pass) { err.textContent = 'Enter your username and password.'; err.style.display = 'block'; return; }
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  try {
+    const res = await fetch(API_BASE + '/api/auth/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: user, password: pass })
+    });
+    if (res.status === 429) throw new Error('Too many attempts. Wait a while before trying again.');
+    if (!res.ok) throw new Error('Incorrect username or password.');
+    const data = await res.json();
+    authToken = data.token; adminUsername = data.username;
+    sessionStorage.setItem(TOKEN_KEY, authToken);
+    sessionStorage.setItem(USERNAME_KEY, adminUsername);
+    await showAdminPanel();
+  } catch (e) {
+    err.textContent = e.message || 'Sign in failed.';
+    err.style.display = 'block';
+    document.getElementById('admin-password').classList.add('shake');
+    setTimeout(() => document.getElementById('admin-password').classList.remove('shake'), 400);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Sign In';
+  }
+}
+
+function adminLogout() {
+  authToken = null; adminUsername = '';
+  sessionStorage.removeItem(TOKEN_KEY); sessionStorage.removeItem(USERNAME_KEY);
+  if (ordersPollTimer) clearInterval(ordersPollTimer);
+  document.getElementById('admin-login-screen').style.display = 'flex';
+  document.getElementById('admin-dashboard').style.display = 'none';
+}
+
+async function showAdminPanel() {
+  document.getElementById('admin-login-screen').style.display = 'none';
+  document.getElementById('admin-dashboard').style.display = 'flex';
+  await Promise.all([loadCategories(), loadProducts(), loadOrders(), loadCustomers(), loadSettings()]);
+  renderAll();
+  if (ordersPollTimer) clearInterval(ordersPollTimer);
+  ordersPollTimer = setInterval(async () => {
+    try {
+      await Promise.all([loadOrders(), loadProducts()]);
+      renderOrders(); renderProducts(); renderInventory(); renderStats();
+    } catch {}
+  }, 15000);
+}
+
+/* ── Data loading ── */
+async function loadProducts() { products = await apiFetch('/api/products'); }
+async function loadCategories() { categories = await apiFetch('/api/categories'); }
+async function loadOrders() { orders = await apiFetch('/api/orders'); }
+async function loadCustomers() { customers = await apiFetch('/api/customers'); }
+async function loadSettings() {
+  try { const s = await apiFetch('/api/settings'); document.getElementById('settings-whatsapp').value = s.whatsappNumber || ''; } catch {}
+}
+
+function renderAll() {
+  renderFilterTabs();
+  renderProducts();
+  renderCategories();
+  renderStats();
+  renderOrders();
+  renderCustomers();
+  renderInventory();
+  populateCategorySelect();
+}
+
+/* ── Categories ── */
+function renderFilterTabs() {
+  const wrap = document.getElementById('admin-filter-tabs');
+  const tabs = ['All', ...categories.filter(c => c.active !== false).map(c => c.name)];
+  wrap.innerHTML = tabs.map(name =>
+    `<button class="admin-filter-tab ${name === adminFilter ? 'active' : ''}" data-cat="${esc(name)}" onclick="setAdminFilter('${esc(name).replace(/'/g, "\\'")}')">${esc(name)}</button>`
+  ).join('');
+}
+
+function populateCategorySelect() {
+  const sel = document.getElementById('pf-cat');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">Select category</option>' +
+    categories.map(c => `<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('');
+  if (current) sel.value = current;
+}
+
+function renderCategories() {
+  const tbody = document.getElementById('admin-categories-tbody');
+  if (!categories.length) {
+    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;padding:40px;color:var(--a-sub)">No categories yet. Add one above.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = categories.map(c => `<tr>
+    <td style="font-weight:600">${esc(c.name)}</td>
+    <td>
+      <label class="toggle-switch">
+        <input type="checkbox" ${c.active !== false ? 'checked' : ''} onchange="toggleCategory('${esc(c.id)}', this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+    </td>
+    <td><button class="admin-btn admin-btn-del" onclick="deleteCategory('${esc(c.id)}')">🗑 Delete</button></td>
+  </tr>`).join('');
+}
+
+async function createCategory() {
+  const input = document.getElementById('new-category-name');
+  const name = input.value.trim();
+  if (!name) { adminToast('Enter a category name', 'error'); return; }
+  try {
+    await apiFetch('/api/categories', { method: 'POST', body: JSON.stringify({ name, active: true }) });
+    input.value = '';
+    await loadCategories(); renderCategories(); renderFilterTabs(); populateCategorySelect();
+    adminToast('Category added');
+  } catch (e) { adminToast(e.message, 'error'); }
+}
+
+async function toggleCategory(id, active) {
+  const cat = categories.find(c => c.id === id);
+  if (!cat) return;
+  try {
+    await apiFetch('/api/categories/' + id, { method: 'PUT', body: JSON.stringify({ name: cat.name, imageUrl: cat.imageUrl, active }) });
+    await loadCategories(); renderCategories(); renderFilterTabs();
+  } catch (e) { adminToast(e.message, 'error'); }
+}
+
+async function deleteCategory(id) {
+  if (!confirm('Delete this category?')) return;
+  try {
+    await apiFetch('/api/categories/' + id, { method: 'DELETE' });
+    await loadCategories(); renderCategories(); renderFilterTabs(); populateCategorySelect();
+    adminToast('Category deleted');
+  } catch (e) { adminToast(e.message, 'error'); }
+}
+
+/* ── Image upload via signed Cloudinary flow ── */
+async function handleImageUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 8 * 1024 * 1024) { adminToast('Image must be under 8MB', 'error'); return; }
+  const status = document.getElementById('img-upload-status');
+  status.textContent = 'Uploading…';
+  try {
+    const sig = await apiFetch('/api/uploads/signature');
+    const form = new FormData();
+    form.append('file', file);
+    form.append('api_key', sig.apiKey);
+    form.append('timestamp', sig.timestamp);
+    form.append('signature', sig.signature);
+    form.append('folder', sig.folder);
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`, { method: 'POST', body: form });
+    const data = await res.json();
+    if (!res.ok || !data.secure_url) throw new Error(data.error?.message || 'Upload failed');
+    pendingImageUrl = data.secure_url;
+    document.getElementById('pf-img-url').value = pendingImageUrl;
+    const preview = document.getElementById('img-preview');
+    preview.src = pendingImageUrl; preview.style.display = 'block';
+    status.textContent = 'Uploaded';
+  } catch (e) {
+    status.textContent = 'Click to upload photo';
+    adminToast('Image upload failed: ' + e.message, 'error');
+  }
+}
+
+/* ── Product sizes ── */
+function addSizeRow(size = '', stock = '') {
+  const wrap = document.getElementById('pf-sizes-rows');
+  const row = document.createElement('div');
+  row.className = 'size-row';
+  row.style.cssText = 'display:flex;gap:8px;align-items:center';
+  row.innerHTML = `
+    <input type="text" class="size-name" placeholder="e.g. S, M, L or 38, 40" maxlength="20" style="flex:2;min-width:0;background:rgba(255,255,255,.75);border:1.5px solid var(--a-border);border-radius:8px;padding:10px 12px;color:var(--a-text);font-size:13px;outline:none">
+    <input type="number" class="size-stock" placeholder="Stock" min="0" style="flex:1;min-width:0;background:rgba(255,255,255,.75);border:1.5px solid var(--a-border);border-radius:8px;padding:10px 12px;color:var(--a-text);font-size:13px;outline:none">
+    <button type="button" class="admin-btn admin-btn-del" style="flex-shrink:0" onclick="this.closest('.size-row').remove();recalcStockFromSizes()">✕</button>
+  `;
+  wrap.appendChild(row);
+  row.querySelector('.size-name').value = size;
+  row.querySelector('.size-stock').value = stock;
+  row.querySelectorAll('input').forEach(inp => inp.addEventListener('input', recalcStockFromSizes));
+  recalcStockFromSizes();
+}
+
+function collectSizes() {
+  return [...document.querySelectorAll('#pf-sizes-rows .size-row')]
+    .map(row => ({ size: row.querySelector('.size-name').value.trim(), stock: parseInt(row.querySelector('.size-stock').value, 10) || 0 }))
+    .filter(s => s.size);
+}
+
+function recalcStockFromSizes() {
+  const sizes = collectSizes();
+  const stockField = document.getElementById('pf-stock');
+  if (sizes.length) {
+    stockField.value = sizes.reduce((sum, s) => sum + s.stock, 0);
+    stockField.readOnly = true;
+    stockField.title = 'Calculated automatically from the sizes below';
+  } else {
+    stockField.readOnly = false;
+    stockField.title = '';
+  }
+}
+
+function clearSizeRows() {
+  document.getElementById('pf-sizes-rows').innerHTML = '';
+  document.getElementById('pf-stock').readOnly = false;
+}
+
+/* ── Products ── */
+function openAddProduct() {
+  if (!categories.length) {
+    adminToast('Add a category first (Categories tab), then add products', 'error');
+    showAdminTab('categories');
+    return;
+  }
+  editingId = null; pendingImageUrl = '';
+  document.getElementById('product-form-title').textContent = 'Add New Product';
+  document.getElementById('product-form').reset();
+  clearSizeRows();
+  document.getElementById('img-preview').style.display = 'none';
+  document.getElementById('img-upload-status').textContent = 'Click to upload photo';
+  populateCategorySelect();
+  document.getElementById('product-modal').classList.add('open');
+}
+
+function openEditProduct(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  editingId = id; pendingImageUrl = p.imageUrl || '';
+  document.getElementById('product-form-title').textContent = 'Edit Product';
+  populateCategorySelect();
+  document.getElementById('pf-name').value = p.name;
+  document.getElementById('pf-cat').value = p.category;
+  document.getElementById('pf-price').value = p.price;
+  document.getElementById('pf-old-price').value = p.compareAtPrice || '';
+  document.getElementById('pf-stock').value = p.stock;
+  document.getElementById('pf-badge').value = p.badge || '';
+  document.getElementById('pf-desc').value = p.description || '';
+  document.getElementById('pf-img-url').value = p.imageUrl || '';
+  clearSizeRows();
+  (p.sizes || []).forEach(s => addSizeRow(s.size, s.stock));
+  const preview = document.getElementById('img-preview');
+  if (p.imageUrl) { preview.src = p.imageUrl; preview.style.display = 'block'; } else preview.style.display = 'none';
+  document.getElementById('product-modal').classList.add('open');
+}
+
+async function saveProduct() {
+  const name = document.getElementById('pf-name').value.trim();
+  const category = document.getElementById('pf-cat').value.trim();
+  const price = parseFloat(document.getElementById('pf-price').value);
+  const compareAtPrice = document.getElementById('pf-old-price').value ? parseFloat(document.getElementById('pf-old-price').value) : null;
+  const stock = parseInt(document.getElementById('pf-stock').value, 10);
+  const badge = document.getElementById('pf-badge').value;
+  const description = document.getElementById('pf-desc').value.trim();
+  const imageUrl = document.getElementById('pf-img-url').value.trim() || pendingImageUrl;
+
+  if (!name) { adminToast('Enter a product name', 'error'); return; }
+  if (!category) { adminToast('Choose a category', 'error'); return; }
+  if (Number.isNaN(price)) { adminToast('Enter a valid price', 'error'); return; }
+  if (Number.isNaN(stock)) { adminToast('Enter a stock quantity', 'error'); return; }
+
+  const btn = document.getElementById('save-product-btn');
+  btn.disabled = true;
+  const sizes = collectSizes();
+  const payload = { name, category, price, compareAtPrice, description, imageUrl, imageUrls: imageUrl ? [imageUrl] : [], badge, stock, active: true, sizes };
+  try {
+    if (editingId) {
+      const existing = products.find(x => x.id === editingId);
+      payload.active = existing ? existing.active : true;
+      await apiFetch('/api/products/' + editingId, { method: 'PUT', body: JSON.stringify(payload) });
+      adminToast('Product updated');
+    } else {
+      await apiFetch('/api/products', { method: 'POST', body: JSON.stringify(payload) });
+      adminToast('Product added');
+    }
+    closeProductModal();
+    await loadProducts(); renderProducts(); renderStats(); renderInventory();
+  } catch (e) {
+    adminToast(e.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function deleteProduct(id) {
+  if (!confirm('Delete this product? This cannot be undone.')) return;
+  try {
+    await apiFetch('/api/products/' + id, { method: 'DELETE' });
+    await loadProducts(); renderProducts(); renderStats(); renderInventory();
+    adminToast('Product deleted');
+  } catch (e) { adminToast(e.message, 'error'); }
+}
+
+function closeProductModal() {
+  document.getElementById('product-modal').classList.remove('open');
+  editingId = null; pendingImageUrl = '';
+}
+
+async function toggleProductStatus(id, active) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  try {
+    await apiFetch('/api/products/' + id, { method: 'PUT', body: JSON.stringify({
+      name: p.name, category: p.category, price: p.price, compareAtPrice: p.compareAtPrice,
+      description: p.description, imageUrl: p.imageUrl, imageUrls: p.imageUrls, badge: p.badge,
+      stock: p.stock, active, sizes: p.sizes || []
+    })});
+    await loadProducts(); renderProducts();
+    adminToast(active ? 'Product is now visible' : 'Product hidden from store');
+  } catch (e) { adminToast(e.message, 'error'); }
+}
+
+/* ── Search / Filter ── */
+function setAdminFilter(cat) {
+  adminFilter = cat;
+  document.querySelectorAll('.admin-filter-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === cat));
+  renderProducts();
+}
+function handleAdminSearch(val) { adminSearch = val.toLowerCase(); renderProducts(); }
+
+/* ── Render ── */
+function renderProducts() {
+  const tbody = document.getElementById('admin-products-tbody');
+  let list = products;
+  if (adminFilter !== 'All') list = list.filter(p => p.category === adminFilter);
+  if (adminSearch) list = list.filter(p => p.name.toLowerCase().includes(adminSearch) || p.category.toLowerCase().includes(adminSearch));
+
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:48px;color:var(--a-sub)">
+      ${products.length === 0 ? 'No products yet. Click "+ Add Product" to get started.' : 'No products match your search.'}
+    </td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = list.map(p => {
+    const stockColor = p.stock === 0 ? 'var(--a-error)' : p.stock <= 5 ? 'var(--a-warn)' : 'var(--a-success)';
+    const stockLabel = p.stock === 0 ? 'Out of Stock' : p.stock <= 5 ? `Low (${p.stock})` : p.stock;
+    const shortDesc = p.description ? esc(p.description.slice(0, 50)) + (p.description.length > 50 ? '…' : '') : 'No description';
+    const sizesLine = (p.sizes && p.sizes.length)
+      ? `<div style="font-size:11px;color:var(--a-pink-soft);margin-top:3px">${p.sizes.map(s => `${esc(s.size)}(${s.stock})`).join(' &middot; ')}</div>`
+      : '';
+    return `<tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:16px">
+          <img src="${esc(p.imageUrl || IMG_FALLBACK)}" alt="${esc(p.name)}" style="width:88px;height:88px;border-radius:10px;object-fit:cover;border:1px solid rgba(224,69,126,.15);flex-shrink:0;background:rgba(224,69,126,.05)" onerror="this.onerror=null;this.src=IMG_FALLBACK">
+          <div>
+            <div style="font-weight:600;color:var(--a-text);font-size:15px">${esc(p.name)}</div>
+            <div style="font-size:12px;color:var(--a-sub);margin-top:3px">${shortDesc}</div>
+            ${sizesLine}
+          </div>
+        </div>
+      </td>
+      <td><span style="background:rgba(224,69,126,.14);color:var(--a-pink-soft);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700">${esc(p.category)}</span></td>
+      <td style="font-family:monospace;font-weight:700">GH₵${Number(p.price).toFixed(2)}</td>
+      <td style="font-family:monospace;color:var(--a-sub);text-decoration:line-through">${p.compareAtPrice ? 'GH₵' + Number(p.compareAtPrice).toFixed(2) : 'None'}</td>
+      <td><span style="color:${stockColor};font-weight:700;font-size:13px">${stockLabel}</span></td>
+      <td>${p.badge ? `<span style="background:rgba(224,69,126,.16);color:var(--a-pink-soft);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:800;text-transform:uppercase">${esc(p.badge)}</span>` : '<span style="color:var(--a-sub)">None</span>'}</td>
+      <td>
+        <label class="toggle-switch">
+          <input type="checkbox" ${p.active !== false ? 'checked' : ''} onchange="toggleProductStatus('${esc(p.id)}', this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="admin-btn admin-btn-edit" onclick="openEditProduct('${esc(p.id)}')">✏️ Edit</button>
+          <button class="admin-btn admin-btn-del" onclick="deleteProduct('${esc(p.id)}')">🗑</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderStats() {
+  const total = products.length;
+  const outStock = products.filter(p => p.stock === 0).length;
+  const lowStock = products.filter(p => p.stock > 0 && p.stock <= 5).length;
+  const totalVal = products.reduce((s, p) => s + p.price * p.stock, 0);
+  const paidOrders = orders.filter(o => o.paymentStatus === 'PAID' || o.paymentMethod === 'CASH');
+  const revenue = paidOrders.reduce((s, o) => s + (o.total || 0), 0);
+
+  const set = (id, val) => { document.getElementById(id).textContent = val; };
+  const setMoney = (id, amount) => { document.getElementById(id).innerHTML = `<span style="font-size:13px;font-weight:700">GH&#8373;</span>${amount.toFixed(2)}`; };
+  set('stat-total-products', total);
+  set('stat-out-stock', outStock);
+  set('stat-low-stock', lowStock);
+  setMoney('stat-inventory-val', totalVal);
+  set('stat-total-orders', orders.length);
+  setMoney('stat-revenue', revenue);
+  document.getElementById('orders-badge').textContent = orders.filter(o => o.status === 'NEW').length;
+}
+
+function renderOrders() {
+  const tbody = document.getElementById('admin-orders-tbody');
+  if (!orders.length) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--a-sub)">No orders yet. Orders placed on the storefront will appear here.</td></tr>`;
+    return;
+  }
+  const statuses = ['NEW', 'PROCESSING', 'COMPLETED', 'CANCELLED'];
+  tbody.innerHTML = orders.map(o => {
+    const digits = (o.phone || '').replace(/[^\d]/g, '');
+    const phoneCell = digits ? `<a href="https://wa.me/${digits}" target="_blank" rel="noopener" style="color:#25D366;text-decoration:none">${esc(o.phone)}</a>` : esc(o.phone || 'None');
+    const options = statuses.map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s.charAt(0) + s.slice(1).toLowerCase()}</option>`).join('');
+    const isDelivery = (o.address || '').startsWith('Delivery');
+    const paymentLabel = o.paymentMethod === 'CASH' ? (isDelivery ? 'Cash on delivery' : 'Cash on pickup') : (o.paymentStatus === 'PAID' ? 'Paid via Paystack' : 'Awaiting Paystack');
+    return `<tr>
+      <td style="font-family:monospace;font-size:12px;color:var(--a-sub)">${esc(o.orderNumber)}</td>
+      <td style="font-weight:600">${esc(o.customerName)}<br><small style="color:var(--a-sub)">${esc(o.email)}</small></td>
+      <td style="color:var(--a-sub)">${phoneCell}</td>
+      <td style="color:var(--a-sub)">${esc(o.address || 'None')}</td>
+      <td style="font-weight:700;color:var(--a-primary)">GH₵${Number(o.total || 0).toFixed(2)}</td>
+      <td style="font-size:12px;color:var(--a-sub)">${esc(paymentLabel)}</td>
+      <td><select onchange="updateOrderStatus('${esc(o.id)}', this.value)" style="background:rgba(255,255,255,.75);color:var(--a-text);border:1px solid var(--a-border);border-radius:6px;padding:5px">${options}</select></td>
+      <td style="color:var(--a-sub);font-size:12px">${new Date(o.createdAt).toLocaleString()}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function updateOrderStatus(id, value) {
+  try {
+    await apiFetch(`/api/orders/${id}/status?value=${encodeURIComponent(value)}`, { method: 'PATCH' });
+    await loadOrders(); renderOrders(); renderStats();
+    adminToast('Order status updated');
+  } catch (e) { adminToast(e.message, 'error'); }
+}
+
+function renderCustomers() {
+  const tbody = document.getElementById('admin-customers-tbody');
+  if (!customers.length) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--a-sub)">No customers yet.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = customers.map(c => `<tr>
+    <td style="font-weight:600">${esc(c.name)}</td>
+    <td style="color:var(--a-sub)">${esc(c.email)}</td>
+    <td style="color:var(--a-sub)">${esc(c.phone)}</td>
+    <td style="color:var(--a-sub)">${esc(c.address || 'None')}</td>
+    <td style="color:var(--a-sub);font-size:12px">${new Date(c.updatedAt).toLocaleDateString()}</td>
+  </tr>`).join('');
+}
+
+function renderInventory() {
+  const tbody = document.getElementById('admin-inventory-tbody');
+  if (!products.length) {
+    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;padding:40px;color:var(--a-sub)">No products yet.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = products.map(p => `<tr>
+    <td style="font-weight:600">${esc(p.name)}</td>
+    <td>${p.stock}</td>
+    <td><button class="admin-btn admin-btn-edit" onclick="openInventoryHistory('${esc(p.id)}','${esc(p.name).replace(/'/g, "\\'")}')">View history</button></td>
+  </tr>`).join('');
+}
+
+async function openInventoryHistory(productId, productName) {
+  const list = document.getElementById('inventory-history-list');
+  list.innerHTML = '<p style="color:var(--a-sub)">Loading…</p>';
+  document.getElementById('inventory-modal').classList.add('open');
+  try {
+    const tx = await apiFetch(`/api/inventory/${productId}/transactions`);
+    if (!tx.length) { list.innerHTML = '<p style="color:var(--a-sub)">No stock movements recorded yet for ' + esc(productName) + '.</p>'; return; }
+    const reasonLabels = { ORDER: 'Sold', ORDER_EXPIRED: 'Restocked (unpaid order expired)' };
+    list.innerHTML = tx.map(t => {
+      const label = reasonLabels[t.reason] || t.reason;
+      const buyer = t.customerName ? `<div style="font-size:12px;color:var(--a-sub);margin-top:2px">${esc(t.customerName)}${t.orderNumber ? ' &middot; ' + esc(t.orderNumber) : ''}</div>` : '';
+      return `<div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:6px 10px;border-bottom:1px solid var(--a-border);padding-bottom:10px">
+      <div style="flex:1;min-width:140px">
+        <span style="font-weight:600">${esc(label)}</span>
+        ${buyer}
+      </div>
+      <span style="font-weight:700;color:${t.quantityDelta < 0 ? 'var(--a-error)' : 'var(--a-success)'}">${t.quantityDelta > 0 ? '+' : ''}${t.quantityDelta}</span>
+      <span style="color:var(--a-sub);font-size:12px">${new Date(t.createdAt).toLocaleString()}</span>
+    </div>`;
+    }).join('');
+  } catch (e) {
+    list.innerHTML = '<p style="color:var(--a-error)">' + esc(e.message) + '</p>';
+  }
+}
+function closeInventoryModal() { document.getElementById('inventory-modal').classList.remove('open'); }
+
+/* ── Bulk CSV import ── */
+function handleCSVImport(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const lines = e.target.result.split('\n').slice(1);
+    let count = 0, failed = 0;
+    for (const line of lines) {
+      const cells = line.split(',').map(s => s?.trim().replace(/^"|"$/g, ''));
+      const [name, category, price, oldPrice, stock, badge, description, imageUrl] = cells;
+      if (!name || !price) continue;
+      try {
+        await apiFetch('/api/products', { method: 'POST', body: JSON.stringify({
+          name, category: category || 'Other', price: parseFloat(price) || 0,
+          compareAtPrice: oldPrice ? parseFloat(oldPrice) : null,
+          stock: parseInt(stock, 10) || 0, badge: badge || '', description: description || '',
+          imageUrl: imageUrl || '', imageUrls: imageUrl ? [imageUrl] : [], active: true
+        })});
+        count++;
+      } catch { failed++; }
+    }
+    await loadProducts(); renderProducts(); renderStats(); renderInventory();
+    adminToast(`${count} products imported${failed ? `, ${failed} rows failed` : ''}`);
+  };
+  reader.readAsText(file);
+}
+
+function exportCSV() {
+  const header = 'Name,Category,Price,Old Price,Stock,Badge,Description,Image URL\n';
+  const rows = products.map(p =>
+    [p.name, p.category, p.price, p.compareAtPrice || '', p.stock, p.badge || '', p.description || '', p.imageUrl || '']
+      .map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')
+  ).join('\n');
+  const blob = new Blob([header + rows], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'toabeas-closet-products.csv'; a.click();
+}
+
+/* ── Settings ── */
+async function saveWhatsappSettings() {
+  const number = document.getElementById('settings-whatsapp').value.replace(/[^\d]/g, '');
+  if (!/^\d{9,15}$/.test(number)) { adminToast('Enter a valid international WhatsApp number', 'error'); return; }
+  try {
+    await apiFetch('/api/settings', { method: 'PUT', body: JSON.stringify({ whatsappNumber: number }) });
+    adminToast('WhatsApp number saved');
+  } catch (e) { adminToast(e.message, 'error'); }
+}
+
+async function changePassword() {
+  const currentPassword = document.getElementById('settings-current-password').value;
+  const newPassword = document.getElementById('settings-new-password').value;
+  const confirmPassword = document.getElementById('settings-confirm-password').value;
+  const err = document.getElementById('settings-error');
+  err.style.display = 'none';
+  if (!currentPassword) { err.textContent = 'Enter your current password.'; err.style.display = 'block'; return; }
+  if (!newPassword || newPassword.length < 8) { err.textContent = 'New password must be at least 8 characters.'; err.style.display = 'block'; return; }
+  if (newPassword !== confirmPassword) { err.textContent = 'New password and confirmation do not match.'; err.style.display = 'block'; return; }
+  try {
+    await apiFetch('/api/auth/password', { method: 'PATCH', body: JSON.stringify({ currentPassword, newPassword }) });
+    document.getElementById('settings-current-password').value = '';
+    document.getElementById('settings-new-password').value = '';
+    document.getElementById('settings-confirm-password').value = '';
+    adminToast('Password updated');
+  } catch (e) {
+    err.textContent = e.message; err.style.display = 'block';
+  }
+}
+
+/* ── Toast ── */
+function adminToast(msg, type = 'success') {
+  let t = document.getElementById('admin-toast');
+  if (!t) { t = document.createElement('div'); t.id = 'admin-toast'; t.className = 'admin-toast'; document.body.appendChild(t); }
+  t.innerHTML = `<span>${type === 'success' ? '✓' : '✕'}</span> ${esc(msg)}`;
+  t.className = `admin-toast ${type} show`;
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+/* ── Tab navigation ── */
+function showAdminTab(tab) {
+  document.querySelectorAll('.admin-tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-nav-item').forEach(n => n.classList.remove('active'));
+  const el = document.getElementById('admin-tab-' + tab);
+  if (el) el.classList.add('active');
+  document.querySelector(`.admin-nav-item[data-tab="${tab}"]`)?.classList.add('active');
+  const titles = { products: 'Products', categories: 'Categories', import: 'Bulk Import', orders: 'Orders', customers: 'Customers', inventory: 'Inventory', settings: 'Settings' };
+  document.getElementById('admin-tab-title').textContent = titles[tab] || 'Products';
+  const actions = document.getElementById('admin-topbar-actions');
+  if (actions) actions.style.display = tab === 'products' ? '' : 'none';
+}
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('admin-username')?.addEventListener('keydown', e => { if (e.key === 'Enter') adminLogin(); });
+  document.getElementById('admin-password')?.addEventListener('keydown', e => { if (e.key === 'Enter') adminLogin(); });
+  document.getElementById('settings-confirm-password')?.addEventListener('keydown', e => { if (e.key === 'Enter') changePassword(); });
+
+  const zone = document.getElementById('img-upload-zone');
+  if (zone) {
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault(); zone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        const input = zone.querySelector('input[type=file]');
+        const dt = new DataTransfer(); dt.items.add(file); input.files = dt.files;
+        handleImageUpload(input);
+      }
+    });
+  }
+
+  if (authToken) showAdminPanel().catch(() => adminLogout());
+});
+</script>
+
+</body>
+</html>
