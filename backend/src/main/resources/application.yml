@@ -24,6 +24,7 @@ app:
   bootstrap-admin:
     username: ${BOOTSTRAP_ADMIN_USERNAME:}
     password: ${BOOTSTRAP_ADMIN_PASSWORD:}
+    reset: ${BOOTSTRAP_ADMIN_RESET:false}
   paystack:
     secret-key: ${PAYSTACK_SECRET_KEY:}
     public-key: ${PAYSTACK_PUBLIC_KEY:}
